@@ -2,10 +2,8 @@ import psycopg2
 import os
 import streamlit as st
 from embeddings import get_embedding
-from dotenv import load_dotenv
 
-load_dotenv()
-DB_URL = os.getenv("DATABASE_URL") or st.secrets["DATABASE_URL"]
+DB_URL = st.secrets["Database_URL"]
 
 
 def connect():
@@ -45,6 +43,12 @@ def load_history(limit=100):
 # ---------------- KNOWLEDGE BASE (RAG) ---------------- #
 
 def save_knowledge(content):
+
+    cached = get_cached_embedding(content)
+
+    if cached:
+        return  # Already embedded ✅
+
     embedding = get_embedding(content)
 
     conn = connect()
@@ -60,6 +64,7 @@ def save_knowledge(content):
 
 
 def search_knowledge(query):
+
     query_embedding = get_embedding(query)
 
     conn = connect()
@@ -76,3 +81,18 @@ def search_knowledge(query):
     conn.close()
 
     return [r[0] for r in rows]
+
+def get_cached_embedding(content):
+    conn = connect()
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT embedding FROM knowledge WHERE content = %s LIMIT 1",
+        (content,)
+    )
+
+    row = cur.fetchone()
+    conn.close()
+
+    return row[0] if row else None
+

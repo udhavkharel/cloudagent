@@ -4,10 +4,7 @@ import streamlit as st
 from config import MODEL_NAME, SYSTEM_PROMPT
 from db import save, load_history
 from rag import retrieve_context
-from dotenv import load_dotenv
-
-load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY") or st.secrets["OPENAI_API_KEY"]
+api_key = st.secrets["OPENAI_API_KEY"]
 # Secure API key from Streamlit secrets
 client = OpenAI(api_key=api_key)
 

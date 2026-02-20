@@ -3,7 +3,7 @@ from agent import chat
 from pdf_ingest import ingest_pdf
 
 st.title("📚 ResearchBuddy")
-
+st.write(st.secrets)
 # ---- PDF Upload Section ----
 uploaded_pdf = st.file_uploader(
     "Upload Research Paper (PDF)",
