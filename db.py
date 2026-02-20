@@ -9,6 +9,8 @@ def connect():
     return psycopg2.connect(DB_URL)
 
 
+# ---------------- CHAT HISTORY ---------------- #
+
 def save(role, message):
     conn = connect()
     cur = conn.cursor()
@@ -37,35 +39,9 @@ def load_history(limit=100):
     return rows[::-1]
 
 
-def search_knowledge(query):
-    conn = connect()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT content FROM knowledge
-        WHERE content ILIKE %s
-        LIMIT 3
-    """, (f"%{query}%",))
-
-    rows = cur.fetchall()
-    conn.close()
-
-    return [r[0] for r in rows]
+# ---------------- KNOWLEDGE BASE (RAG) ---------------- #
 
 def save_knowledge(content):
-    conn = connect()
-    cur = conn.cursor()
-
-    cur.execute(
-        "INSERT INTO knowledge (content) VALUES (%s)",
-        (content,)
-    )
-
-    conn.commit()
-    conn.close()
-
-def save_knowledge(content):
-
     embedding = get_embedding(content)
 
     conn = connect()
@@ -81,7 +57,6 @@ def save_knowledge(content):
 
 
 def search_knowledge(query):
-
     query_embedding = get_embedding(query)
 
     conn = connect()
@@ -98,4 +73,3 @@ def search_knowledge(query):
     conn.close()
 
     return [r[0] for r in rows]
-
