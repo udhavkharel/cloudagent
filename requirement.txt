@@ -6,3 +6,4 @@ beautifulsoup4
 pypdf
 numpy
 sqlite3
+python-dotenv

@@ -1,8 +1,11 @@
 import psycopg2
+import os
 import streamlit as st
 from embeddings import get_embedding
+from dotenv import load_dotenv
 
-DB_URL = st.secrets["DATABASE_URL"]
+load_dotenv()
+DB_URL = os.getenv("DATABASE_URL") or st.secrets["DATABASE_URL"]
 
 
 def connect():
